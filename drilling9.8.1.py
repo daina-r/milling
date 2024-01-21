@@ -71,7 +71,7 @@ def erase_table():
 
 
 def write_Head(Feed_freq, mirror):
-    lines = ['G40 G49 G80 G21 G17 G90', 'G{}'.format('55' if mirror else '54'), 'G0 Z150', f'M3 S{Feed_freq}\n']
+    lines = ['G40 G49 G80 G50 G21 G17 G90', 'G{}'.format('55' if mirror else '54'), 'G0 Z150', f'M3 S{Feed_freq}\n']
 
     with open(r'C:\Users\Public\temp_py.txt', 'w') as file:
         for line in lines:
@@ -216,13 +216,13 @@ def slotting(X, Y_1, Y_2, width, depth, Mill, Feed, step_down):
     return line + f'G1 Z-{depth} F{Feed}\n' + slot_milling(X, Y_1, Y_2, width, Mill)
 
 
-def write_Gcode(X, Y, D, depth, Mill, Feed, step_down, slot, mirror):
+def write_Gcode(X, Y, D, depth, Mill, Feed, step_down, mirror):
     global max_Y
 
     with open(r'C:\Users\Public\temp_py.txt', 'a') as file:
-        if slot:
+        if isinstance(Y, list):
             Y_1, Y_2 = Y[0], Y[1]
-
+            
             if max_Y < Y_2: max_Y = Y_2
             if mirror == True: X = X - D
 
@@ -258,7 +258,7 @@ def searching(current, line, route):
     return route
 
 
-def calculate(Mill, Feed, step_down, slot, mirror):
+def calculate(Mill, Feed, step_down, mirror):
     lst = []
     count = 0
 
@@ -279,13 +279,15 @@ def calculate(Mill, Feed, step_down, slot, mirror):
         Y = data_set[marker][1]
         D = data_set[marker][2]
         depth = data_set[marker][3]
-        write_Gcode(X, Y, D, depth, Mill, Feed, step_down, slot, mirror)
+        write_Gcode(X, Y, D, depth, Mill, Feed, step_down, mirror)
 
     extract_code()
 
 
 def check_table():
     global max_Y
+    global data_set
+    data_set = []
     settings = [Mill_tf, Freq_tf, Feed_tf, Step_Down_tf]
 
     for i in range(4):
@@ -357,31 +359,22 @@ def check_table():
 
                 data_set.append([X, Y, D, depth])
 
-        #         if calculate_Gcode(X, Y, D, depth, Mill, Feed, step_down, slot, mirror): result = True
-        #         else: return
-
-        # elif not X and not Y and not D and not depth and result:
         elif not X and not Y and not D and not depth:
-            pass
-
-        #     with open(r'C:\Users\Public\temp_py.txt', 'a') as file:
-        #         file.write('\'end\n' + 'G0 Z150\n' + 'M5\n' + f'Y{int(max_Y + 100)}\n' + 'M30')
-
-        #     return extract_code()
+            continue
         
         else:
             return messagebox.showwarning('Неполные данные', 'Проверьте заполнение необходимых полей')
         
-    calculate(Mill, Feed, step_down, slot, mirror)
+    calculate(Mill, Feed, step_down, mirror)
 
 
 window = Tk()
 window.title('Фрезерование отверстий относительно верха заготовки')
-window.geometry('650x730')
+window.geometry('700x900')
 
 frame0 = Frame(window)
 frame0.pack(expand=True)
-canvas = Canvas(frame0, width=500, height=480, borderwidth=0, background="#ffffff")
+canvas = Canvas(frame0, width=600, height=600, borderwidth=0, background="#ffffff")
 
 frame = Frame(frame0)
 frame.pack(expand=True)
