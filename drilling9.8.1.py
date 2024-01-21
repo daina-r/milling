@@ -70,8 +70,8 @@ def erase_table():
             entry.delete(0, END)  # Очищаем ячейку Entry
 
 
-def write_Head(Feed_freq, mirror):
-    lines = ['G40 G49 G80 G50 G21 G17 G90', 'G{}'.format('55' if mirror else '54'), 'G0 Z150', f'M3 S{Feed_freq}\n']
+def write_Head(Mill, Feed_freq, mirror):
+    lines = [f'\'Обработка фрезой {Mill}мм\n', 'G40 G49 G80 G50 G21 G17 G90', 'G{}'.format('55' if mirror else '54'), 'G0 Z150', f'M3 S{Feed_freq}\n']
 
     with open(r'C:\Users\Public\temp_py.txt', 'w') as file:
         for line in lines:
@@ -309,7 +309,7 @@ def check_table():
     result = False
     max_Y = 0
     mirror = Mirror.get()
-    write_Head(Freq, mirror)
+    write_Head(Mill, Freq, mirror)
 
     for row in set:
         count = False
