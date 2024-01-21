@@ -71,7 +71,7 @@ def erase_table():
 
 
 def write_Head(Mill, Feed_freq, mirror):
-    lines = [f'\'Обработка фрезой {Mill}мм\n', 'G40 G49 G80 G50 G21 G17 G90', 'G{}'.format('55' if mirror else '54'), 'G0 Z150', f'M3 S{Feed_freq}\n']
+    lines = [f'\'Processing with End Mill Cutter {Mill} mm\n', 'G40 G49 G80 G50 G21 G17 G90', 'G{}'.format('55' if mirror else '54'), 'G0 Z150', f'M3 S{Feed_freq}\n']
 
     with open(r'C:\Users\Public\temp_py.txt', 'w') as file:
         for line in lines:
